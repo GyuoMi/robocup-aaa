@@ -6,29 +6,30 @@ from math_ops.Math_Ops import Math_Ops as M
 
 class Strategy():
     def __init__(self, world):
+        self.world = world
         self.play_mode = world.play_mode
-        self.robot_model = world.robot  
+        self.robot_model = world.robot
         self.my_head_pos_2d = self.robot_model.loc_head_position[:2]
         self.player_unum = self.robot_model.unum
         self.mypos = (world.teammates[self.player_unum-1].state_abs_pos[0],world.teammates[self.player_unum-1].state_abs_pos[1])
-       
+
         self.side = 1
         if world.team_side_is_left:
             self.side = 0
 
-        self.teammate_positions = [teammate.state_abs_pos[:2] if teammate.state_abs_pos is not None 
+        self.teammate_positions = [teammate.state_abs_pos[:2] if teammate.state_abs_pos is not None
                                     else None
                                     for teammate in world.teammates
                                     ]
-        
-        self.opponent_positions = [opponent.state_abs_pos[:2] if opponent.state_abs_pos is not None 
+
+        self.opponent_positions = [opponent.state_abs_pos[:2] if opponent.state_abs_pos is not None
                                     else None
                                     for opponent in world.opponents
                                     ]
 
 
 
-        
+
 
         self.team_dist_to_ball = None
         self.team_dist_to_oppGoal = None
@@ -47,7 +48,7 @@ class Strategy():
         self.ball_dist = np.linalg.norm(self.ball_vec)
         self.ball_sq_dist = self.ball_dist * self.ball_dist # for faster comparisons
         self.ball_speed = np.linalg.norm(world.get_ball_abs_vel(6)[:2])
-        
+
         self.goal_dir = M.target_abs_angle(self.ball_2d,(15.05,0))
 
         self.PM_GROUP = world.play_mode_group
@@ -75,17 +76,29 @@ class Strategy():
         self.my_desired_position = self.mypos
         self.my_desired_orientation = self.ball_dir
 
+    def CalculateCostMatrix(self, team_pos, form_pos):
+        n = len(team_pos)
+        cost_matrix = np.zeros((n,n))
+
+        for i in range(n):
+            for j in range(n):
+                if team_pos[i] is not None and form_pos is not None:
+                    cost_matrix[i][j] = np.linalg.norm(team_pos[i] - form_pos[j])
+                else:
+                    cost_matrix[i][j] = np.inf
+
+                return cost_matrix
 
     def GenerateTeamToTargetDistanceArray(self, target, world):
         for teammate in world.teammates:
             pass
-        
+
 
     def IsFormationReady(self, point_preferences):
-        
+
         is_formation_ready = True
         for i in range(1, 12):
-            if i != self.active_player_unum: 
+            if i != self.active_player_unum:
                 teammate_pos = self.teammate_positions[i-1]
 
                 if not teammate_pos is None:
@@ -101,4 +114,3 @@ class Strategy():
         target_dir = M.vector_angle(target_vec)
 
         return target_dir
-    
