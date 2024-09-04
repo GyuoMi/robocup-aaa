@@ -18,6 +18,8 @@ def subtract_col_minimum(matrix):
 
 
 def find_covered_rows_and_cols(matrix, covered_rows, covered_cols):
+    covered_rows.clear()
+    covered_cols.clear()
     while np.any(matrix == 0):
         # column|row , value
         max_zero_row = (-1, -1)
@@ -84,11 +86,16 @@ def cover_zeros(matrix):
     covered_rows = []
     covered_cols = []
 
+    subtract_row_minimum(matrix)
+    subtract_col_minimum(matrix)
+
     find_covered_rows_and_cols(matrix, covered_rows, covered_cols)
     lines = len(covered_rows) + len(covered_cols)
     while lines != 11:
         create_additional_zeros(matrix, covered_rows, covered_cols)
+        # zero array before getting the next iteration of covered rows/columns
         find_covered_rows_and_cols(matrix, covered_rows, covered_cols)
+        lines = len(covered_rows) + len(covered_cols)
 
 
 def role_assignment(teammate_positions, formation_positions):
@@ -96,12 +103,21 @@ def role_assignment(teammate_positions, formation_positions):
     # Input : Locations of all teammate locations and positions
     # Output : Map from unum -> positions
     # -----------------------------------------------------------#
+
+    # step 1
     cost_matrix = strats.CalculateCostMatrix(
         team_pos=teammate_positions, form_pos=formation_positions
     )
 
     # convert to numpy array
-    cost_matrix = np.array(cost_matrix)
+
+    # step 2 - 6
+    # modifies the cost matrix in place.
+    cost_matrix = np.array(cost_matrix)  # requires np array
+    cover_zeros(cost_matrix)
+
+    # TODO: step 7
+    # something here
 
     row_idx, col_idx = linear_sum_assignmene(cost_matrix)
 
