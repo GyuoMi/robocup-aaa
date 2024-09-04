@@ -42,7 +42,7 @@ def find_covered_rows_and_cols(matrix, covered_rows, covered_cols):
         # select the row or column with the most 0's
         if max_zero_row[1] > max_zero_col[1]:
             row = max_zero_row[0]
-            # turns every occurance of 0 to -1
+            # turns every occurance of 0 to -1 to show it has been used by a line
             matrix[row, matrix[row] == 0] = -1
             covered_rows.append(row)
         else:
