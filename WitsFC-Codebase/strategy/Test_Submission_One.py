@@ -7,9 +7,6 @@ from Submission_One import *
 class TestSubOne(unittest.TestCase):
     # has to use numpy array
     def test_subtract_row_minimum(self):
-
-        print("test subtract row minimum:\n")
-
         input = np.array([[15, 40, 45], [20, 60, 35], [20, 40, 25]])
         expected_output = np.array([[0, 25, 30], [0, 40, 15], [0, 20, 5]])
 
