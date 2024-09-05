@@ -165,3 +165,4 @@ RoboViz.tar.gz
 __MACOSX
 bin
 .direnv
+default.nix
