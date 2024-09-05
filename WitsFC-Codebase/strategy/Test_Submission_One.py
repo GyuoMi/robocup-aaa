@@ -1,6 +1,4 @@
 import unittest
-
-from numpy import matrix
 from Submission_One import *
 
 
