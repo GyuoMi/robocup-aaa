@@ -86,8 +86,8 @@ class Strategy():
                     cost_matrix[i][j] = np.linalg.norm(team_pos[i] - form_pos[j])
                 else:
                     cost_matrix[i][j] = np.inf
-
-                return cost_matrix
+        # print (cost_matrix)
+        return cost_matrix
 
     def GenerateTeamToTargetDistanceArray(self, target, world):
         for teammate in world.teammates:

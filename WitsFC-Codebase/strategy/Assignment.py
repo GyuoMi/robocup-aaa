@@ -2,22 +2,23 @@ from Submission_One import cover_zeros
 import numpy as np
 
 from scipy.optimize import linear_sum_assignment
-from strategy.Strategy import Strategy as strats
 
+from strategy.Strategy import Strategy
+from world.World import World
 
 def role_assignment(teammate_positions, formation_positions):
 
     # Input : Locations of all teammate locations and positions
     # Output : Map from unum -> positions
     # -----------------------------------------------------------#
-
     # step 1
-    cost_matrix = strats.CalculateCostMatrix(
-        team_pos=teammate_positions, form_pos=formation_positions
-    )
-
     # convert to numpy array
+    #-----------------------------------------------------------#
 
+    # may need to sort out parameter passed to strategy, could be okay i think
+    strats = Strategy(World)
+    cost_matrix = strats.CalculateCostMatrix(teammate_positions, formation_positions)
+    
     # step 2 - 6
     # modifies the cost matrix in place.
     cost_matrix = np.array(cost_matrix)  # requires np array
