@@ -166,3 +166,4 @@ __MACOSX
 bin
 .direnv
 default.nix
+.envrc
