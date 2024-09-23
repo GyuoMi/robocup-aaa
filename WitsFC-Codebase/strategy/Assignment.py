@@ -6,10 +6,24 @@ from scipy.optimize import linear_sum_assignment
 from strategy.Strategy import Strategy
 from world.World import World
 
+
 def mask_out(matrix, row, col):
-    matrix[row, :] = float('inf')
-    matrix[:, col] = float('inf')
+    matrix[row, :] = np.inf
+    matrix[:, col] = np.inf
     return matrix
+
+
+def CalculateCostMatrix(team_pos, form_pos):
+    n = len(team_pos)
+    cost_matrix = np.zeros((n, n))
+
+    for i in range(n):
+        for j in range(n):
+            if team_pos[i] is not None and form_pos is not None:
+                cost_matrix[i][j] = np.linalg.norm(team_pos[i] - form_pos[j])
+            else:
+                cost_matrix[i][j] = np.inf
+    return cost_matrix
 
 
 def role_assignment(teammate_positions, formation_positions):
@@ -19,11 +33,10 @@ def role_assignment(teammate_positions, formation_positions):
     # -----------------------------------------------------------#
     # step 1
     # convert to numpy array
-    #-----------------------------------------------------------#
+    # -----------------------------------------------------------#
 
     # may need to sort out parameter passed to strategy, could be okay i think
-    strats = Strategy(World)
-    cost_matrix = strats.CalculateCostMatrix(teammate_positions, formation_positions)
+    cost_matrix = CalculateCostMatrix(teammate_positions, formation_positions)
 
     # step 2 - 6
     # modifies the cost matrix in place.
@@ -51,17 +64,10 @@ def role_assignment(teammate_positions, formation_positions):
         selected_col = zero_cols[0]
 
         point_preferences[selected_row + 1] = formation_positions[selected_col]
-
         # mask out row and col for selected zero
         cost_matrix = mask_out(cost_matrix, selected_row, selected_col)
 
-    row_idx, col_idx = linear_sum_assignment(cost_matrix)
-
-    # Example
-    point_preferences = {}
-    for i in range(len(row_idx)):
-        point_preferences[row_idx[i] + 1] = formation_positions[col_idx[i]]
-
+    print(point_preferences)
     return point_preferences
 
 
