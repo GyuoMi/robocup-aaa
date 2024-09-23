@@ -42,15 +42,15 @@ def find_covered_rows_and_cols(matrix, covered_rows, covered_cols):
         if max_zero_row[1] > max_zero_col[1]:
             row = max_zero_row[0]
             # turns every occurance of 0 to -1 to show it has been used by a line
-            matrix[row, matrix[row] == 0] = -1
+            matrix[row, matrix[row] == 0] = -np.inf
             covered_rows.append(row)
         else:
             col = max_zero_col[0]
-            matrix[matrix[:, col] == 0, col] = -1
+            matrix[matrix[:, col] == 0, col] = -np.inf
             covered_cols.append(col)
 
     # set all 0's set to -1 back to 0
-    matrix[matrix == -1] = 0
+    matrix[matrix == -np.inf] = 0
 
 
 def create_additional_zeros(matrix, covered_rows, covered_cols):
@@ -64,7 +64,7 @@ def create_additional_zeros(matrix, covered_rows, covered_cols):
             uncovered_cols.append(i)
 
     # find the smallest value in uncovered elements
-    smallest = 100000000
+    smallest = np.inf
     for i in uncovered_rows:
         for j in uncovered_cols:
             smallest = min(smallest, matrix[i][j])
