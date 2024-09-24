@@ -1,16 +1,67 @@
 from .Submission_One import cover_zeros
 import numpy as np
 
-from scipy.optimize import linear_sum_assignment
 
 from strategy.Strategy import Strategy
 from world.World import World
 
 
 def mask_out(matrix, row, col):
-    matrix[row, :] = np.inf
-    matrix[:, col] = np.inf
-    return matrix
+    for i in range(len(matrix[0])):
+        matrix[row][i] = np.inf
+    for j in range(len(matrix)):
+        matrix[j][col] = np.inf
+
+
+def find_row_with_least_zeros(matrix):
+    min_zeros = np.inf
+    row_index = -1
+
+    for i, row in enumerate(matrix):
+        zero_count = np.sum(row == 0.0)
+        if 1 <= zero_count < min_zeros:
+            min_zeros = zero_count
+            row_index = i
+
+    return row_index
+
+
+def find_row_with_lowest_value(matrix):
+    lowest_row_index = -1
+    lowest_value = np.inf
+
+    for i, row in enumerate(matrix):
+        min_value = np.min(row)  # Find the minimum value in the current row
+        if min_value < lowest_value:
+            lowest_value = min_value
+            lowest_row_index = i
+
+    return lowest_row_index, lowest_value
+
+
+def find_row_with_most_zeros(matrix):
+    max_zeros = 0
+    row_index = -1
+
+    for i, row in enumerate(matrix):
+        zero_count = np.sum(row == 0.0)
+        if zero_count > max_zeros:
+            max_zeros = zero_count
+            row_index = i
+
+    return row_index
+
+
+def find_first_value(row, value):
+    for i in range(len(row)):
+        if row[i] == value:
+            return i
+
+
+def find_first_zero(row):
+    for i in range(len(row)):
+        if row[i] == 0.0:
+            return i
 
 
 def CalculateCostMatrix(team_pos, form_pos):
@@ -19,15 +70,13 @@ def CalculateCostMatrix(team_pos, form_pos):
 
     for i in range(n):
         for j in range(n):
-            if team_pos[i] is not None and form_pos is not None:
-                cost_matrix[i][j] = np.linalg.norm(team_pos[i] - form_pos[j])
-            else:
-                cost_matrix[i][j] = np.inf
+            cost_matrix[i][j] = np.linalg.norm(team_pos[i] - form_pos[j])
     return cost_matrix
 
 
 def role_assignment(teammate_positions, formation_positions):
 
+    np.set_printoptions(floatmode="fixed", precision=2, suppress=True)
     # Input : Locations of all teammate locations and positions
     # Output : Map from unum -> positions
     # -----------------------------------------------------------#
@@ -41,33 +90,35 @@ def role_assignment(teammate_positions, formation_positions):
     # step 2 - 6
     # modifies the cost matrix in place.
     cost_matrix = np.array(cost_matrix)  # requires np array
-    cover_zeros(cost_matrix)
-
-    # TODO: step 7
+    cost_matrix = cover_zeros(cost_matrix)
+    # print("cover zero Matrix:")
+    # print("\n")
+    # print(cost_matrix)
+    # print("\n")
+    # # TODO: step 7
     # something here
     n = cost_matrix.shape[0]
     point_preferences = {}
 
-    while np.isfinite(cost_matrix).any():  # loop until zeros masked
+    while True:  # loop until zeros masked
         # find lowest zeros rows
-        zero_counts = [(i, np.sum(cost_matrix[i] == 0)) for i in range(n)]
-        zero_counts = [(i, count) for i, count in zero_counts if count > 0]
+        row_index = find_row_with_least_zeros(cost_matrix)
 
-        if not zero_counts:
+        if row_index == -1:
+            # if np.any(np.isfinite(cost_matrix)):
+            #     row_index, val = find_row_with_lowest_value(cost_matrix)
+            #     col_index = find_first_value(cost_matrix[row_index], val)
+            #     point_preferences[row_index + 1] = formation_positions[col_index]
+            #     mask_out(cost_matrix, row_index, col_index)
+            #     continue
             break
 
-        # select min zero row
-        selected_row, _ = min(zero_counts, key=lambda x: x[1])
+        col_index = find_first_zero(cost_matrix[row_index])
 
-        # select lowest column index
-        zero_cols = np.where(cost_matrix[selected_row] == 0)[0]
-        selected_col = zero_cols[0]
-
-        point_preferences[selected_row + 1] = formation_positions[selected_col]
+        point_preferences[row_index + 1] = formation_positions[col_index]
         # mask out row and col for selected zero
-        cost_matrix = mask_out(cost_matrix, selected_row, selected_col)
+        mask_out(cost_matrix, row_index, col_index)
 
-    print(point_preferences)
     return point_preferences
 
 

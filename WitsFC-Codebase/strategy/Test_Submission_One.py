@@ -37,6 +37,9 @@ class TestSubOne(unittest.TestCase):
         # check to see if it correctly crossed off the lines
         self.assertEqual(lines, 2)
 
+        # check to see if it correctly crossed off the correct row and column
+        self.assertEqual(covered_cols[0], 0)
+        self.assertEqual(covered_rows[0], 2)
         # check to see if it reset all values in array
         self.assertEqual(input.tolist(), test_matrix.tolist())
 
