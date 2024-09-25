@@ -2,15 +2,12 @@ from .Submission_One import cover_zeros
 import numpy as np
 
 
-from strategy.Strategy import Strategy
-from world.World import World
-
-
 def mask_out(matrix, row, col):
     for i in range(len(matrix[0])):
         matrix[row][i] = np.inf
     for j in range(len(matrix)):
         matrix[j][col] = np.inf
+    return matrix
 
 
 def find_row_with_least_zeros(matrix):
@@ -76,49 +73,80 @@ def CalculateCostMatrix(team_pos, form_pos):
 
 def role_assignment(teammate_positions, formation_positions):
 
-    np.set_printoptions(floatmode="fixed", precision=2, suppress=True)
-    # Input : Locations of all teammate locations and positions
-    # Output : Map from unum -> positions
-    # -----------------------------------------------------------#
-    # step 1
-    # convert to numpy array
-    # -----------------------------------------------------------#
-
-    # may need to sort out parameter passed to strategy, could be okay i think
     cost_matrix = CalculateCostMatrix(teammate_positions, formation_positions)
-
-    # step 2 - 6
-    # modifies the cost matrix in place.
-    cost_matrix = np.array(cost_matrix)  # requires np array
-    cost_matrix = cover_zeros(cost_matrix)
-    # print("cover zero Matrix:")
-    # print("\n")
-    # print(cost_matrix)
-    # print("\n")
-    # # TODO: step 7
-    # something here
-    n = cost_matrix.shape[0]
     point_preferences = {}
+    copy_of_cost = cost_matrix.copy()
+    cover_zeros(copy_of_cost)
+    n = cost_matrix.shape[0]
 
-    while True:  # loop until zeros masked
+    test = copy_of_cost
+
+    while np.isfinite(test).any():  # loop until zeros masked
         # find lowest zeros rows
-        row_index = find_row_with_least_zeros(cost_matrix)
+        zero_counts = [(i, np.sum(test[i] == 0)) for i in range(n)]
+        zero_counts = [(i, count) for i, count in zero_counts if count > 0]
 
-        if row_index == -1:
-            # if np.any(np.isfinite(cost_matrix)):
-            #     row_index, val = find_row_with_lowest_value(cost_matrix)
-            #     col_index = find_first_value(cost_matrix[row_index], val)
-            #     point_preferences[row_index + 1] = formation_positions[col_index]
-            #     mask_out(cost_matrix, row_index, col_index)
-            #     continue
+        if not zero_counts:
+            if np.isfinite(test).any():
+                copy_of_cost = cost_matrix.copy()
+                cover_zeros(copy_of_cost)
+                test = copy_of_cost
+                continue
             break
 
-        col_index = find_first_zero(cost_matrix[row_index])
+        # select min zero row
+        selected_row, _ = min(zero_counts, key=lambda x: x[1])
 
-        point_preferences[row_index + 1] = formation_positions[col_index]
+        # select lowest column index
+        zero_cols = np.where(test[selected_row] == 0)[0]
+        selected_col = zero_cols[0]
+        point_preferences[selected_row + 1] = formation_positions[selected_col]
         # mask out row and col for selected zero
-        mask_out(cost_matrix, row_index, col_index)
+        test = mask_out(test, selected_row, selected_col)
 
+    # np.set_printoptions(floatmode="fixed", precision=2, suppress=True)
+    # # Input : Locations of all teammate locations and positions
+    # # Output : Map from unum -> positions
+    # # -----------------------------------------------------------#
+    # # step 1
+    # # convert to numpy array
+    # # -----------------------------------------------------------#
+    #
+    # # may need to sort out parameter passed to strategy, could be okay i think
+    # cost_matrix = CalculateCostMatrix(teammate_positions, formation_positions)
+    # # step 2 - 6
+    # # modifies the cost matrix in place.
+    # cost_matrix = np.array(cost_matrix)  # requires np array
+    # cost_matrix = cover_zeros(cost_matrix)
+    # # print("cover zero Matrix:")
+    # # print("\n")
+    # # print(cost_matrix)
+    # # print("\n")
+    # # # TODO: step 7
+    # # something here
+    # n = cost_matrix.shape[0]
+    # point_preferences = {}
+    #
+    # test_matrix = cost_matrix.copy()
+    # while True:  # loop until zeros masked
+    #     # find lowest zeros rows
+    #     row_index = find_row_with_least_zeros(test_matrix)
+    #
+    #     if row_index == -1:
+    #         # if np.any(np.isfinite(cost_matrix)):
+    #         #     row_index, val = find_row_with_lowest_value(cost_matrix)
+    #         #     col_index = find_first_value(cost_matrix[row_index], val)
+    #         #     point_preferences[row_index + 1] = formation_positions[col_index]
+    #         #     mask_out(cost_matrix, row_index, col_index)
+    #         #     continue
+    #         break
+    #
+    #     col_index = find_first_zero(test_matrix[row_index])
+    #
+    #     point_preferences[row_index + 1] = formation_positions[col_index]
+    #     # mask out row and col for selected zero
+    #     mask_out(test_matrix, row_index, col_index)
+    #
     return point_preferences
 
 
