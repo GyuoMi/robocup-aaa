@@ -1,5 +1,5 @@
 import unittest
-from Submission_One import *
+from temp import *
 
 
 class TestSubOne(unittest.TestCase):
