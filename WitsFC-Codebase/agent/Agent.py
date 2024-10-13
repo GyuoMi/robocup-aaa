@@ -7,7 +7,7 @@ from strategy.Assignment import role_assignment
 from strategy.Assignment import pass_reciever_selector
 from strategy.Strategy import Strategy 
 
-from formation.Formation import GenerateBasicFormation
+from formation.Formation import GenerateBasicFormation, four_four_two
 
 
 class Agent(Base_Agent):
@@ -227,7 +227,8 @@ class Agent(Base_Agent):
         else:
             drawer.clear("status")
 
-        formation_positions = GenerateBasicFormation()
+        # formation_positions = GenerateBasicFormation()
+        formation_positions = four_four_two()
         point_preferences = role_assignment(strategyData.teammate_positions, formation_positions)
         strategyData.my_desired_position = point_preferences[strategyData.player_unum]
         strategyData.my_desried_orientation = strategyData.GetDirectionRelativeToMyPositionAndTarget(strategyData.my_desired_position)
@@ -236,6 +237,7 @@ class Agent(Base_Agent):
 
         if not strategyData.IsFormationReady(point_preferences):
             return self.move(strategyData.my_desired_position, orientation=strategyData.my_desried_orientation)
+        #TODO:????
         #else:
         #     return self.move(strategyData.my_desired_position, orientation=strategyData.ball_dir)
 
