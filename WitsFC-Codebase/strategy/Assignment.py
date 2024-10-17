@@ -52,10 +52,10 @@ def pass_reciever_selector(player_unum, teammate_positions, final_target):
         player_unum, teammate_positions, final_target
     )
 
-    # if it is the closest then take the shot directly
+    # if you are the closest then take the shot directly
     if player_unum == closest_player:
         target = final_target
     else:
         target = teammate_positions[closest_player]
 
-    return target
+    return min_distance, target
