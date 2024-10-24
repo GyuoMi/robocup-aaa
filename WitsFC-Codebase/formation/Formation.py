@@ -73,7 +73,7 @@ def three_four_three(x):
     ]
     # for pos in formation:
     #     pos[0] += x
-    # return formation
+    return formation
 
 
 # defend
