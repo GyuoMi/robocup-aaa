@@ -184,6 +184,8 @@ class Agent(Base_Agent):
         finished : bool
             Returns True if the behavior finished or was successfully aborted.
         """
+
+        # def execute(self, reset, orientation, is_orientation_absolute, speed=1, stop=False):
         return self.behavior.execute("Dribble", None, None)
 
         if self.min_opponent_ball_dist < 1.45 and enable_pass_command:
@@ -323,21 +325,72 @@ class Agent(Base_Agent):
         distance, player = find_closest_to_target(
             strategyData.teammate_positions, strategyData.ball_2d
         )
+        sorted_distance_players = find_closest_players_to_target(
+            strategyData.teammate_positions, strategyData.ball_2d
+        )
 
         if player == strategyData.player_unum - 1:
-            target = pass_reciever_selector(
-                strategyData.player_unum, strategyData.teammate_positions, (15, 0)
+            max_kick_distance = 5
+            max_opp_distance = 3
+            min_foward_distance = 2
+            min_distance, target = pass_reciever_selector(
+                strategyData.player_unum,
+                strategyData.teammate_positions,
+                strategyData.opponent_positions,
+                (15, 0),
+                max_kick_distance,
+                max_opp_distance,
+                min_foward_distance,
             )
             drawer.line(strategyData.mypos, target, 2, drawer.Color.red, "pass line")
-            return self.kickTarget(strategyData, strategyData.mypos, target)
+
+            # if min distance to target or another player is > x meters
+            # then dribble closer to the goal
+
+            opp_distance, closest_opponent_to_me = find_closest_to_target(
+                strategyData.opponent_positions, strategyData.mypos
+            )
+
+            current_behavior, _ = self.behavior.get_current()
+
+            # if you are the closest just shoot to the goal idgaf
+            if target[0] == 15 and target[1] == 0 and min_distance < max_kick_distance:
+                if current_behavior == "Dribble":
+                    return self.behavior.execute("Dribble", None, None, 1, True)
+                else:
+                    return self.kickTarget(
+                        strategyData,
+                        strategyData.mypos,
+                        target,
+                        enable_pass_command=True,
+                    )
+
+            # this is a combination of dribbling closer to goal, and passing whenever you can
+            # if someone is coming near to you, dribble away. Don't stop until you're clear
+            # find closest opponent
+            # just try to keep possession of the ball
+            if min_distance >= max_kick_distance or 0.3 < opp_distance:
+                return self.kick()
+
+            # if you are in the dribbling mode, exit it safely then kick
+            if current_behavior == "Dribble":
+                return self.behavior.execute("Dribble", None, None, 1, True)
+
+            return self.kickTarget(
+                strategyData, strategyData.mypos, target, enable_pass_command=False
+            )
 
         # Depending where the ball is, change formation
-        if strategyData.ball_2d[0] > 10:
-            formation_positions = three_four_three()
-        elif strategyData.ball_2d[0] < -10:
+        new_x = (
+            max(0.5, (strategyData.ball_2d[0] + 15) / 15) * (self.init_pos[0] + 15) - 15
+        )
+        print(new_x)
+        if strategyData.ball_2d[0] >= 5:
+            formation_positions = three_four_three(new_x)
+        elif strategyData.ball_2d[0] <= -5:
             formation_positions = five_four_one()
         else:
-            formation_positions = four_four_two()
+            formation_positions = four_four_two(new_x)
 
         ############################################################
 
@@ -345,7 +398,7 @@ class Agent(Base_Agent):
             strategyData.teammate_positions, formation_positions
         )
         strategyData.my_desired_position = point_preferences[strategyData.player_unum]
-        strategyData.my_desried_orientation = (
+        strategyData.my_desired_orientation = (
             strategyData.GetDirectionRelativeToMyPositionAndTarget(
                 strategyData.my_desired_position
             )
@@ -362,7 +415,8 @@ class Agent(Base_Agent):
         if not strategyData.IsFormationReady(point_preferences):
             return self.move(
                 strategyData.my_desired_position,
-                orientation=strategyData.my_desried_orientation,
+                orientation=strategyData.ball_dir,
+                # orientation=strategyData.my_desired_orientation,
             )
         # TODO:????
         # else:
@@ -381,19 +435,19 @@ class Agent(Base_Agent):
         else:
             drawer.clear_player()
 
-        if (
-            strategyData.active_player_unum == strategyData.robot_model.unum
-        ):  # I am the active player
-            target = pass_reciever_selector(
-                strategyData.player_unum, strategyData.teammate_positions, (15, 0)
-            )
-            drawer.line(strategyData.mypos, target, 2, drawer.Color.red, "pass line")
-            return self.kickTarget(strategyData, strategyData.mypos, target)
-        else:
-            drawer.clear("pass line")
-            return self.move(
-                strategyData.my_desired_position, orientation=strategyData.ball_dir
-            )
+        # if (
+        #     strategyData.active_player_unum == strategyData.robot_model.unum
+        # ):  # I am the active player
+        #     target = pass_reciever_selector(
+        #         strategyData.player_unum, strategyData.teammate_positions, (15, 0)
+        #     )
+        #     drawer.line(strategyData.mypos, target, 2, drawer.Color.red, "pass line")
+        #     return self.kickTarget(strategyData, strategyData.mypos, target)
+        # else:
+        #     drawer.clear("pass line")
+        #     return self.move(
+        #         strategyData.my_desired_position, orientation=strategyData.ball_dir
+        #     )
 
         # if strategyData.PM == self.world.M_GAME_OVER:
         #     pass

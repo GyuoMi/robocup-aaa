@@ -34,7 +34,15 @@ def role_assignment(teammate_positions, formation_positions):
 from .Submission_Two import *
 
 
-def pass_reciever_selector(player_unum, teammate_positions, final_target):
+def pass_reciever_selector(
+    player_unum,
+    teammate_positions,
+    opponent_positions,
+    final_target,
+    max_kick_distance,
+    max_opp_distance,
+    min_forward_distance,
+):
     player_unum -= 1
     # Input : Locations of all teammates and a final target you wish the ball to finish at
     # Output : Target Location in 2d of the player who is recieveing the ball
@@ -48,8 +56,16 @@ def pass_reciever_selector(player_unum, teammate_positions, final_target):
     # min_distance, closest_player = find_closest_to_target(
     #     teammate_positions, final_target
     # )
-    min_distance, closest_player = find_closest_player_forward(
-        player_unum, teammate_positions, final_target
+    min_distance, closest_player = (
+        find_closest_player_forward_without_opponent_at_least_distance_closer_to_goal(
+            player_unum,
+            teammate_positions,
+            opponent_positions,
+            final_target,
+            max_kick_distance,
+            max_opp_distance,
+            distance_forward=min_forward_distance,
+        )
     )
 
     # if you are the closest then take the shot directly
