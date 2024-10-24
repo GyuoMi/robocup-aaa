@@ -384,13 +384,12 @@ class Agent(Base_Agent):
         new_x = (
             max(0.5, (strategyData.ball_2d[0] + 15) / 15) * (self.init_pos[0] + 15) - 15
         )
-        print(new_x)
         if strategyData.ball_2d[0] >= 5:
-            formation_positions = three_four_three(new_x)
+            formation_positions = three_four_three()
         elif strategyData.ball_2d[0] <= -5:
             formation_positions = five_four_one()
         else:
-            formation_positions = four_four_two(new_x)
+            formation_positions = four_four_two()
 
         ############################################################
 

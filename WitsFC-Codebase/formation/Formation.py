@@ -23,7 +23,7 @@ def GenerateBasicFormation():
 
 
 # counter attack
-def four_four_two(x):
+def four_four_two():
 
     formation = [
         np.array([-13, 0]),  # Goalkeeper
@@ -44,14 +44,11 @@ def four_four_two(x):
         np.array([11, -4]),  # Forward Right
     ]
 
-    # for pos in formation:
-    #     pos[0] += x
-
     return formation
 
 
 # attack
-def three_four_three(x):
+def three_four_three():
 
     formation = [
         np.array([-13, 0]),  # Goalkeeper
@@ -64,15 +61,14 @@ def three_four_three(x):
         np.array([4, 3]),  # Center Midfielder Left
         np.array([4, -3]),  # Center Midfielder Right
         #
-        np.array([0, 5]),  # Left Midfielder
-        np.array([0, -5]),  # Right Midfielder
+        np.array([0, 3]),  # Left Midfielder
+        np.array([0, -3]),  # Right Midfielder
         #
-        np.array([9, 4]),  # Forward Left
-        np.array([9, -4]),  # Forward Right
+        np.array([9, 2]),  # Forward Left
+        np.array([9, -2]),  # Forward Right
         np.array([12, 0]),  # Center Back Right
     ]
-    # for pos in formation:
-    #     pos[0] += x
+
     return formation
 
 
