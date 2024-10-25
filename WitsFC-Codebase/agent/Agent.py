@@ -332,7 +332,7 @@ class Agent(Base_Agent):
         if player == strategyData.player_unum - 1:
             max_kick_distance = 5
             max_opp_distance = 3
-            min_foward_distance = 2
+            min_foward_distance = 3
             min_distance, target = pass_reciever_selector(
                 strategyData.player_unum,
                 strategyData.teammate_positions,

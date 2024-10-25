@@ -37,11 +37,11 @@ def four_four_two():
         np.array([3, 3]),  # Center Midfielder Left
         np.array([3, -3]),  # Center Midfielder Right
         #
-        np.array([8, 7]),  # Left Midfielder
-        np.array([8, -7]),  # Right Midfielder
+        np.array([8, 4]),  # Left Midfielder
+        np.array([8, -4]),  # Right Midfielder
         #
-        np.array([11, 4]),  # Forward Left
-        np.array([11, -4]),  # Forward Right
+        np.array([12, 2]),  # Forward Left
+        np.array([12, -2]),  # Forward Right
     ]
 
     return formation
@@ -64,8 +64,8 @@ def three_four_three():
         np.array([0, 3]),  # Left Midfielder
         np.array([0, -3]),  # Right Midfielder
         #
-        np.array([9, 2]),  # Forward Left
-        np.array([9, -2]),  # Forward Right
+        np.array([10, 1]),  # Forward Left
+        np.array([10, -1]),  # Forward Right
         np.array([12, 0]),  # Center Back Right
     ]
 
