@@ -355,26 +355,12 @@ class Agent(Base_Agent):
 
             # if you are the closest just shoot to the goal idgaf
             if target[0] == 15 and target[1] == 0 and min_distance < max_kick_distance:
-                if current_behavior == "Dribble":
-                    return self.behavior.execute("Dribble", None, None, 1, True)
-                else:
-                    return self.kickTarget(
-                        strategyData,
-                        strategyData.mypos,
-                        target,
-                        enable_pass_command=True,
-                    )
-
-            # this is a combination of dribbling closer to goal, and passing whenever you can
-            # if someone is coming near to you, dribble away. Don't stop until you're clear
-            # find closest opponent
-            # just try to keep possession of the ball
-            if min_distance >= max_kick_distance or 0.3 < opp_distance:
-                return self.kick()
-
-            # if you are in the dribbling mode, exit it safely then kick
-            if current_behavior == "Dribble":
-                return self.behavior.execute("Dribble", None, None, 1, True)
+                return self.kickTarget(
+                    strategyData,
+                    strategyData.mypos,
+                    target,
+                    enable_pass_command=True,
+                )
 
             return self.kickTarget(
                 strategyData, strategyData.mypos, target, enable_pass_command=False
