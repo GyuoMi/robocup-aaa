@@ -58,8 +58,8 @@ def three_four_three():
         np.array([-7, -7]),  # Right Defender
         #
         #
-        np.array([4, 3]),  # Center Midfielder Left
-        np.array([4, -3]),  # Center Midfielder Right
+        np.array([4, 2]),  # Center Midfielder Left
+        np.array([4, -2]),  # Center Midfielder Right
         #
         np.array([0, 3]),  # Left Midfielder
         np.array([0, -3]),  # Right Midfielder

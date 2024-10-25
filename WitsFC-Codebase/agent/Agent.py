@@ -359,7 +359,7 @@ class Agent(Base_Agent):
                     strategyData,
                     strategyData.mypos,
                     target,
-                    enable_pass_command=True,
+                    enable_pass_command=False,
                 )
 
             return self.kickTarget(
