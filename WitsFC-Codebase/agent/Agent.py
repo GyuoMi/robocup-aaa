@@ -325,9 +325,9 @@ class Agent(Base_Agent):
         distance, player = find_closest_to_target(
             strategyData.teammate_positions, strategyData.ball_2d
         )
-        sorted_distance_players = find_closest_players_to_target(
-            strategyData.teammate_positions, strategyData.ball_2d
-        )
+        # sorted_distance_players = find_closest_players_to_target(
+        #     strategyData.teammate_positions, strategyData.ball_2d
+        # )
 
         if player == strategyData.player_unum - 1:
             max_kick_distance = 5
@@ -337,6 +337,7 @@ class Agent(Base_Agent):
                 strategyData.player_unum,
                 strategyData.teammate_positions,
                 strategyData.opponent_positions,
+                strategyData.ball_2d,
                 (15, 0),
                 max_kick_distance,
                 max_opp_distance,
@@ -347,11 +348,11 @@ class Agent(Base_Agent):
             # if min distance to target or another player is > x meters
             # then dribble closer to the goal
 
-            opp_distance, closest_opponent_to_me = find_closest_to_target(
-                strategyData.opponent_positions, strategyData.mypos
-            )
+            # opp_distance, closest_opponent_to_me = find_closest_to_target(
+            #     strategyData.opponent_positions, strategyData.mypos
+            # )
 
-            current_behavior, _ = self.behavior.get_current()
+            # current_behavior, _ = self.behavior.get_current()
 
             # if you are the closest just shoot to the goal idgaf
             if target[0] == 15 and target[1] == 0 and min_distance < max_kick_distance:
@@ -367,9 +368,7 @@ class Agent(Base_Agent):
             )
 
         # Depending where the ball is, change formation
-        new_x = (
-            max(0.5, (strategyData.ball_2d[0] + 15) / 15) * (self.init_pos[0] + 15) - 15
-        )
+
         if strategyData.ball_2d[0] >= 5:
             formation_positions = three_four_three()
         elif strategyData.ball_2d[0] <= -5:

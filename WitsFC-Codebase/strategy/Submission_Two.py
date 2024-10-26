@@ -111,6 +111,75 @@ def find_closest_player_forward_without_opponent_at_least_distance_closer_to_goa
 
 
 # find the single player closer to the target then you without opponents around them
+def find_closest_player_forward_without_opponent_at_least_distance_closer_to_goal_using_ball_pos(
+    player_u,
+    players,
+    opponents,
+    ball_pos,
+    target,
+    max_kick_distance,
+    max_opp_distance,
+    distance_forward,
+):
+    # gets the coords of the current player
+    # cur_player = players[player_u]
+    cur_player = ball_pos
+
+    # find players that are closer then you to goal
+    your_distance_to_target = distance(ball_pos, target)
+    players_closer_to_target = []
+
+    for number, player in enumerate(players):
+        d = distance(cur_player, player)
+        # find people closer to the target then you
+        # they should also be sufficiently closer, at least some x amount
+        if d < your_distance_to_target - distance_forward:
+            players_closer_to_target.append((number, player))
+
+    if len(players_closer_to_target) == 0:
+        # if nobody is closer then return yourself
+        return your_distance_to_target, player_u
+
+    # now we have a list of all players closer to the target
+    # from that, find the player that is closest to you that ISN'T YOU
+    closest_players = []
+    # furthest kicking distance
+    kick_distance = max_kick_distance
+
+    # gets a list of players that are within kick distance from you
+    for player_info in players_closer_to_target:
+        number, player = player_info
+
+        d = distance(cur_player, player)
+        if d < kick_distance and number != player_u:
+            closest_players.append((d, number, player))
+
+    # if you're the closest just return yourself and your number
+    if len(closest_players) == 0:
+        return your_distance_to_target, player_u
+
+    # if there are players within kick distance from you
+    # check which one of them are have players around them
+    viable_players = []
+    max_opponent_distance = max_opp_distance
+    for d, number, player in closest_players:
+        # if the closest opponent to you is larger then max_allowed_distance then add them as viable
+        opp_distance, _ = find_closest_to_target(opponents, player)
+        if opp_distance > max_opponent_distance:
+            viable_players.append((d, number, player))
+
+    # once again check if there is no viable candidates
+    # if you're the closest just return yourself and your number
+    if len(viable_players) == 0:
+        return your_distance_to_target, player_u
+
+    # return the first viable candidate since all of them would be fine
+    min_distance, number, player = viable_players[0]
+
+    return min_distance, number
+
+
+# find the single player closer to the target then you without opponents around them
 def find_closest_player_forward_without_opponent(
     player_u, players, opponents, target, max_kick_distance, max_opp_distance
 ):

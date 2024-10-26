@@ -38,6 +38,7 @@ def pass_reciever_selector(
     player_unum,
     teammate_positions,
     opponent_positions,
+    ball_pos,
     final_target,
     max_kick_distance,
     max_opp_distance,
@@ -57,10 +58,11 @@ def pass_reciever_selector(
     #     teammate_positions, final_target
     # )
     min_distance, closest_player = (
-        find_closest_player_forward_without_opponent_at_least_distance_closer_to_goal(
+        find_closest_player_forward_without_opponent_at_least_distance_closer_to_goal_using_ball_pos(
             player_unum,
             teammate_positions,
             opponent_positions,
+            ball_pos,
             final_target,
             max_kick_distance,
             max_opp_distance,
