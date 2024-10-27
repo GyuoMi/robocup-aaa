@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.optimize import linear_sum_assignment
+from .Hungarian import *
 
 
 def CalculateCostMatrix(team_pos, form_pos):
@@ -20,13 +20,14 @@ def role_assignment(teammate_positions, formation_positions):
     cost_matrix = CalculateCostMatrix(teammate_positions, formation_positions)
     # Example
     point_preferences = {}
-
-    row_idx, col_idx = linear_sum_assignment(cost_matrix)
+    hungarian = Hungarian(cost_matrix)
+    hungarian.calculate()
+    vals = hungarian.get_results()
 
     # Example
     point_preferences = {}
-    for i in range(len(row_idx)):
-        point_preferences[row_idx[i] + 1] = formation_positions[col_idx[i]]
+    for i in range(len(vals)):
+        point_preferences[vals[i][0] + 1] = formation_positions[vals[i][1]]
 
     return point_preferences
 
