@@ -77,20 +77,20 @@ def five_four_one():
     formation = [
         np.array([-13, 0]),  # Goalkeeper
         #
-        np.array([-8, 6]),  # Left Defender
+        np.array([-6, 4]),  # Left Defender
         np.array([-10, 0]),  # Center Back Left
-        np.array([-8, -6]),  # Right Defender
+        np.array([-6, -4]),  # Right Defender
         #
         #
-        np.array([-9, 4]),  # Center Midfielder Left
-        np.array([-9, -4]),  # Center Midfielder Right
+        np.array([-10, 2]),  # Center Midfielder Left
+        np.array([-10, -2]),  # Center Midfielder Right
         #
-        np.array([-4, 7]),  # Left Midfielder
-        np.array([-4, -7]),  # Right Midfielder
+        np.array([-4, 3]),  # Left Midfielder
+        np.array([-4, -3]),  # Right Midfielder
         #
-        np.array([-3, 2]),  # Forward Left
-        np.array([-3, -2]),  # Forward Right
-        np.array([0, 0]),  # Center Back Right
+        np.array([-2, 2]),  # Forward Left
+        np.array([-2, -2]),  # Forward Right
+        np.array([2, 0]),  # Center Back Right
     ]
 
     return formation
